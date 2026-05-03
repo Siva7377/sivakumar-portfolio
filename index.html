@@ -844,10 +844,12 @@ Keep answers brief, professional, and conversational. If asked a question you do
         chatHistory.push({ role: "model", parts: [{ text: botReply }] });
         addMessage(botReply, true);
       } else {
+        chatHistory.pop(); // Revert user message on error to keep history alternating
         addMessage("I'm sorry, I'm having trouble connecting. Please call Vamshi at +91 8179828084.", true);
       }
     } catch (error) {
       typingDiv.remove();
+      chatHistory.pop(); // Revert user message on error to keep history alternating
       addMessage("I don't have that information right now. Please call Vamshi directly at +91 8179828084.", true);
     }
   }

@@ -269,6 +269,17 @@
   .detail-label { font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
   .detail-val { color: var(--text-muted); text-align: right; font-family: var(--font-mono); font-size: 0.9rem; }
 
+  /* Academics */
+  .academic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  .academic-card { position: relative; overflow: hidden; }
+  .academic-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+  }
+  .academic-year { font-family: var(--font-mono); color: var(--accent); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.8rem; }
+  .academic-degree { font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.6rem; }
+  .academic-university { color: var(--text-muted); margin: 0; }
+
   /* Skills */
   .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
   .skill-category h3 { border-bottom: 2px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
@@ -495,8 +506,8 @@
   <nav>
     <div class="nav-container">
       <a class="nav-logo" href="#hero" aria-label="Vamshidhar Reddy home">
-        <img src="img/vamshi_logo_no_bg.png" alt="Vamshidhar Reddy logo">
-        Vamshi<span>.</span>
+        <!--<img src="img/vamshi_logo_no_bg.png" alt="Vamshidhar Reddy logo">-->
+        Vamshi<span></span>
       </a>
       <div class="nav-actions">
         <ul class="nav-links" id="nav-links">
@@ -504,7 +515,10 @@
           <li><a href="#skills">Skills</a></li>
           <li><a href="#experience">Experience</a></li>
           <li><a href="#projects">Projects</a></li>
+          <li><a href="#academics">Academics</a></li>
           <li><a href="#certificates">Certs</a></li>
+          <li><a href="#awards">Awards</a></li>
+          <li><a href="#personal">Personal</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
@@ -652,7 +666,7 @@
             </div>
             <p style="font-weight: 600; margin-bottom: 1rem; color: var(--text-main);">Blue Book Services API Platform</p>
             <ul class="exp-bullets">
-              <li>Migrated legacy monolithic C# system to FastAPI microservices — developed 500+ APIs, reducing technical debt.</li>
+              <li>Designed and delivered scalable FastAPI services with clean REST contracts, reusable modules, and production-ready validation patterns.</li>
               <li>Achieved 35% API latency reduction using Celery for asynchronous background task processing.</li>
               <li>Managed Azure cloud deployments, CI/CD pipelines, and Blob Storage integration.</li>
               <li>Built automated ETL workflows with Python parallel processing, cutting data processing time significantly.</li>
@@ -719,7 +733,7 @@
         <div class="card proj-card">
           <div class="proj-number">PROJECT_01</div>
           <h3 style="color: var(--text-main);">Blue Book Services APIs</h3>
-          <p>Enterprise migration from a C# monolith to a FastAPI microservices architecture. Designed for high availability and production scale with over 500 endpoints.</p>
+          <p>Enterprise-grade FastAPI platform built for high availability, clean service boundaries, and production scale with 500+ RESTful endpoints.</p>
           <ul class="proj-highlights">
             <li>500+ RESTful endpoints</li>
             <li>35% latency drop via Celery</li>
@@ -762,10 +776,30 @@
     </div>
   </section>
 
+  <!-- ACADEMICS -->
+  <section id="academics">
+    <div class="container">
+      <div class="section-tag">05. Academic Details</div>
+      <h2>Education</h2>
+      <div class="academic-grid">
+        <div class="card academic-card">
+          <div class="academic-year">2021</div>
+          <div class="academic-degree">MCA</div>
+          <p class="academic-university">Yogi Vemana University</p>
+        </div>
+        <div class="card academic-card">
+          <div class="academic-year">2018</div>
+          <div class="academic-degree">B.Sc. in Computers</div>
+          <p class="academic-university">Yogi Vemana University</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CERTIFICATES -->
   <section id="certificates">
     <div class="container">
-      <div class="section-tag">05. Certifications</div>
+      <div class="section-tag">06. Certifications</div>
       <h2>My Certificates</h2>
       <div class="cert-grid">
 
@@ -833,6 +867,50 @@
     </div>
   </section>
 
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="container">
+      <div class="section-tag">07. Awards & Achievements</div>
+      <h2>Key Achievements</h2>
+      <div class="skills-grid">
+        <div class="card">
+          <h3>Key Contributor Award</h3>
+          <p>Recognized for the BBOS Project with excellence in delivery and client satisfaction.</p>
+        </div>
+        <div class="card">
+          <h3>35% API Latency Reduction</h3>
+          <p>Improved API performance through optimized asynchronous execution.</p>
+        </div>
+        <div class="card">
+          <h3>70% Faster Deployments</h3>
+          <p>Deployed scalable applications on AWS and Azure, cutting deployment time by 70%.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSONAL DETAILS -->
+  <section id="personal">
+    <div class="container">
+      <div class="section-tag">08. Personal Details</div>
+      <h2>Personal Info</h2>
+      <div class="about-details">
+        <div class="detail-item">
+          <div class="detail-label">Date of Birth</div>
+          <div class="detail-val">19th Jun 1998</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Languages Known</div>
+          <div class="detail-val">English, Telugu & Kannada</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Address</div>
+          <div class="detail-val">Hyderabad</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox">
     <span class="lightbox-close" onclick="closeLightbox()">✕</span>
@@ -843,7 +921,7 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
-      <div class="section-tag">06. What's Next?</div>
+      <div class="section-tag">09. What's Next?</div>
       <h2>Get In Touch</h2>
       <div class="contact-wrapper">
         <p>I'm currently open for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
@@ -937,12 +1015,6 @@
   for (const [id, val] of Object.entries(els)) {
     const el = document.getElementById(id);
     if (el) el.innerHTML = val;
-  }
-
-  const presentEl = document.getElementById('exp-present-date');
-  if (presentEl) {
-    const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    presentEl.textContent = `${mn[now.getMonth()]} ${now.getFullYear()}`;
   }
 
   const fyEl = document.getElementById('footer-year');
@@ -1126,23 +1198,27 @@ ${pageContent}
     }
 
     if (/\b(project|projects|portfolio|built|blue book|codexpro|expenses|expense tracker)\b/.test(normalized)) {
-      return "His featured projects include Blue Book Services APIs, an enterprise FastAPI microservices migration with 500+ endpoints; CodeXpro, an online coding assessment platform; and an Expenses Tracker built with Django and MySQL.";
+      return "His featured projects include Blue Book Services APIs, an enterprise-grade FastAPI platform with 500+ RESTful endpoints; CodeXpro, an online coding assessment platform; and an Expenses Tracker built with Django and MySQL.";
     }
 
-    if (/\b(achievement|achievements|impact|latency|performance|award|awards|key contributor)\b/.test(normalized)) {
-      return "Key highlights from Vamshi's portfolio include building 500+ REST APIs, reducing API latency by 35% using Celery, handling Azure deployments, and earning a Key Contributor Award.";
+    if (/\b(achievement|achievements|impact|latency|performance|award|awards|key contributor|deployment|deployments|bbos)\b/.test(normalized)) {
+      return "Vamshi's achievements include the Key Contributor Award for the BBOS Project, 35% API latency reduction through optimized asynchronous execution, and scalable AWS/Azure deployments that cut deployment time by 70%.";
     }
 
     if (/\b(certificate|certification|certifications|award)\b/.test(normalized)) {
       return "His certifications include Python Full Stack Development, Python Program Expert, Git Version Control, Postman API Fundamentals, GitHub Foundations, and a Key Contributor Award.";
     }
 
-    if (/\b(education|degree|study|qualification)\b/.test(normalized)) {
-      return "Vamshi has a Master of Computer Application degree.";
+    if (/\b(education|degree|study|qualification|academic|academics|mca|bsc|b.sc)\b/.test(normalized)) {
+      return "Vamshi completed MCA from Yogi Vemana University in 2021 and B.Sc. in Computers from Yogi Vemana University in 2018.";
     }
 
-    if (/\b(location|place|city|where)\b/.test(normalized)) {
-      return "Vamshi is based in Hyderabad, India.";
+    if (/\b(location|place|city|where|address)\b/.test(normalized)) {
+      return "Vamshi is based in Hyderabad, India. His address is listed as Hyderabad.";
+    }
+
+    if (/\b(personal|dob|date of birth|birth|birthday|language|languages|telugu|kannada|english)\b/.test(normalized)) {
+      return "Vamshi's personal details: Date of Birth is 19th Jun 1998; languages known are English, Telugu, and Kannada; address is Hyderabad.";
     }
 
     if (/\b(available|availability|open to work|opportunity|opportunities|hire|hiring|recruiter|hr)\b/.test(normalized)) {

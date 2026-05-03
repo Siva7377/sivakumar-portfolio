@@ -789,7 +789,8 @@ document.addEventListener('DOMContentLoaded', function() {
   chatBtn.addEventListener('click', () => chatWindow.classList.toggle('active'));
   chatClose.addEventListener('click', () => chatWindow.classList.remove('active'));
 
-  const systemPrompt = `You are an AI assistant for HR and recruiters visiting Vamshidhar Reddy's portfolio. Vamshi is a Technical Analyst / Senior Software Engineer specializing in Python, FastAPI, and Cloud Architecture. He built 500+ APIs, cut latency by 35% at Stryv.ai, and works with Azure, Docker, AWS, Django, React, and MySQL. Keep answers brief, professional, and conversational. If asked a question you don't know the answer to, or if the user wants to schedule an interview or talk to him, you MUST reply with exactly: "I don't have that information. Please call Vamshi directly at +91 8179828084."`;
+  const expYears = document.getElementById('bio-years') ? document.getElementById('bio-years').textContent : '4.2';
+  const systemPrompt = `You are an AI assistant for HR and recruiters visiting Vamshidhar Reddy's portfolio. Vamshi is a Technical Analyst / Senior Software Engineer with ${expYears} years of experience, specializing in Python, FastAPI, and Cloud Architecture. He built 500+ APIs, cut latency by 35% at Stryv.ai, and works with Azure, Docker, AWS, Django, React, and MySQL. Keep answers brief, professional, and conversational. If asked a question you don't know the answer to, or if the user wants to schedule an interview or talk to him, you MUST reply with exactly: "I don't have that information. Please call Vamshi directly at +91 8179828084."`;
 
   let chatHistory = [
     { role: "user", parts: [{ text: systemPrompt }] },

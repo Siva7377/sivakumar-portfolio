@@ -381,42 +381,102 @@
     border-radius: 50px; padding: 1rem 1.5rem; font-size: 1.1rem;
     font-family: var(--font-mono); font-weight: 600; cursor: pointer;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); transition: var(--transition);
+    display: flex; align-items: center; gap: 0.5rem;
   }
   .chat-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); }
   .chat-window {
     position: fixed; bottom: 6rem; right: 2rem; z-index: 10000;
-    width: 350px; max-width: calc(100vw - 4rem); height: 450px;
+    width: 370px; max-width: calc(100vw - 2rem); height: 500px;
     background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: 12px; box-shadow: var(--card-shadow);
+    border-radius: 16px; box-shadow: 0 24px 60px rgba(15,23,42,0.18);
     display: none; flex-direction: column; overflow: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease;
   }
   .chat-window.active { display: flex; }
   .chat-header {
-    background: var(--bg-alt); padding: 1rem; border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    padding: 1rem 1.2rem; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
-    font-weight: 700; color: var(--text-main);
+    font-weight: 700; color: white;
   }
-  .chat-header button { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+  .chat-header-info { display: flex; align-items: center; gap: 0.6rem; }
+  .chat-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.25); display: flex; align-items: center;
+    justify-content: center; font-size: 1rem; border: 2px solid rgba(255,255,255,0.4);
+  }
+  .chat-header-text { display: flex; flex-direction: column; }
+  .chat-header-name { font-size: 0.95rem; font-weight: 700; color: white; line-height: 1.2; }
+  .chat-status { font-size: 0.72rem; color: rgba(255,255,255,0.8); font-family: var(--font-mono); display: flex; align-items: center; gap: 0.3rem; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; display: inline-block; }
+  .chat-header-close { background: rgba(255,255,255,0.18); border: none; color: white; cursor: pointer; font-size: 1rem; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .chat-header-close:hover { background: rgba(255,255,255,0.32); }
   .chat-messages {
-    flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg);
+    flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex;
+    flex-direction: column; gap: 0.8rem; background: var(--bg);
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
   }
-  .msg { max-width: 85%; padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
-  .bot-msg { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 0; }
+  .msg {
+    max-width: 88%; padding: 0.75rem 1rem; border-radius: 12px;
+    font-size: 0.92rem; line-height: 1.5; word-wrap: break-word; animation: msgIn 0.2s ease;
+  }
+  @keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .bot-msg {
+    background: var(--card-bg); color: var(--text-main);
+    border: 1px solid var(--border); align-self: flex-start;
+    border-bottom-left-radius: 3px;
+  }
   .bot-msg a { color: var(--accent); font-weight: 700; text-decoration: underline; }
-  .user-msg { background: var(--accent); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+  .user-msg {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white; align-self: flex-end; border-bottom-right-radius: 3px;
+  }
   .chat-input {
-    display: flex; padding: 1rem; background: var(--bg-alt); border-top: 1px solid var(--border); gap: 0.5rem;
+    display: flex; padding: 0.85rem; background: var(--bg-alt);
+    border-top: 1px solid var(--border); gap: 0.5rem; align-items: center;
   }
   .chat-input input {
-    flex-grow: 1; padding: 0.6rem 1rem; border: 1px solid var(--border);
-    border-radius: 20px; outline: none; font-family: var(--font-sans); background: var(--bg); color: var(--text-main);
+    flex-grow: 1; padding: 0.65rem 1rem; border: 1px solid var(--border);
+    border-radius: 24px; outline: none; font-family: var(--font-sans);
+    background: var(--bg); color: var(--text-main); font-size: 0.92rem;
+    transition: border-color 0.2s;
   }
-  .chat-input button {
-    background: var(--accent); color: white; border: none; border-radius: 20px;
-    padding: 0 1rem; cursor: pointer; font-weight: 600; font-family: var(--font-mono); transition: var(--transition);
+  .chat-input input:focus { border-color: var(--accent); }
+  .chat-input input:disabled { opacity: 0.5; cursor: not-allowed; }
+  .chat-send-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white; border: none; border-radius: 50%; width: 38px; height: 38px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition); flex-shrink: 0; font-size: 1rem;
   }
-  .chat-input button:hover { background: var(--accent-hover); }
-  .typing-indicator { font-size: 0.85rem; color: var(--text-muted); align-self: flex-start; display: none; margin-left: 0.5rem; }
+  .chat-send-btn:hover { transform: scale(1.08); }
+  .chat-send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* Typing / waking up indicator */
+  .typing-bubble {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 12px; border-bottom-left-radius: 3px;
+    padding: 0.75rem 1rem; align-self: flex-start;
+    display: flex; align-items: center; gap: 0.5rem; max-width: 88%;
+    font-size: 0.85rem; color: var(--text-muted); animation: msgIn 0.2s ease;
+  }
+  .typing-dots { display: flex; gap: 3px; }
+  .typing-dots span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    animation: typingBounce 1.2s ease-in-out infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+  .wake-msg {
+    font-size: 0.8rem; color: var(--text-muted); text-align: center;
+    padding: 0.4rem 0.8rem; background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2); border-radius: 8px;
+    margin: 0 0.5rem; font-family: var(--font-mono);
+  }
 
   /* Motion */
   @keyframes fadeUp {
@@ -1092,276 +1152,169 @@ window.closeLightbox = function() {
   document.getElementById('lightbox').classList.remove('active');
 };
 
-// ─── CHATBOT LOGIC ───
-document.addEventListener('DOMContentLoaded', function() {
-  const chatBtn = document.getElementById('chat-btn');
-  const chatWindow = document.getElementById('chat-window');
-  const chatClose = document.getElementById('chat-close');
+// ─── CHATBOT ───
+document.addEventListener('DOMContentLoaded', function () {
+  const API_URL = 'https://vamshi-chat-api.onrender.com/api/v1/chat';
+  const WAKE_TIMEOUT_MS = 60000; // 60s max wait for cold start
+
+  const chatBtn      = document.getElementById('chat-btn');
+  const chatWindow   = document.getElementById('chat-window');
+  const chatClose    = document.getElementById('chat-close');
   const chatMessages = document.getElementById('chat-messages');
-  const chatInputField = document.getElementById('chat-input-field');
-  const chatSend = document.getElementById('chat-send');
+  const chatInput    = document.getElementById('chat-input-field');
+  const chatSend     = document.getElementById('chat-send');
 
-  // WARNING: Storing API keys in frontend JavaScript is highly insecure for production apps.
-  const API_KEY = "AIzaSyA2yFXdi5Hhr3d" + "TQqK1gWo89vp7aTg-vUA";
+  let conversationHistory = [];
+  let serverReady = false;
+  let wakingUp = false;
 
-  chatBtn.addEventListener('click', () => chatWindow.classList.toggle('active'));
+  // ── Toggle window ──
+  chatBtn.addEventListener('click', () => {
+    chatWindow.classList.toggle('active');
+    if (chatWindow.classList.contains('active') && !serverReady && !wakingUp) {
+      pingServer();
+    }
+    if (chatWindow.classList.contains('active')) {
+      setTimeout(() => chatInput.focus(), 100);
+    }
+  });
   chatClose.addEventListener('click', () => chatWindow.classList.remove('active'));
 
-  const CONTACT_PHONE_DISPLAY = '+91 8179828084';
-  const CONTACT_PHONE_TEL = '+918179828084';
-  const FALLBACK_REPLY = `I don't have that information in Vamshi's portfolio. Please call Vamshi directly at ${CONTACT_PHONE_DISPLAY}.`;
-  const expYears = document.getElementById('bio-years') ? document.getElementById('bio-years').textContent : '4.2';
-  const pageContent = Array.from(document.querySelectorAll('section')).map(s => s.innerText).join('\n\n');
-  const systemPrompt = `You are Vamshi's portfolio assistant for recruiters, HR teams, and visitors.
+  // ── Ping server on load to reduce cold start wait ──
+  async function pingServer() {
+    try {
+      await fetch('https://vamshi-chat-api.onrender.com/health', { method: 'GET' });
+      serverReady = true;
+    } catch (e) { /* silent */ }
+  }
+  // Pre-warm immediately on page load
+  pingServer();
 
-Use the portfolio page content below as your source of truth. Answer naturally for simple greetings and basic chat. For portfolio questions, answer only using the portfolio content below. Be brief, accurate, professional, and helpful.
-If the user says hi, hello, hey, good morning, good afternoon, good evening, thanks, or thank you, respond warmly and invite them to ask about Vamshi's experience, skills, projects, certifications, resume, or contact details.
-If the user asks about Vamshi's skills, projects, work experience, certifications, education, contact details, resume, location, or availability, answer clearly from the context.
-If the answer is not available in the context, do not guess or make up details.
-If the user asks to schedule an interview, discuss salary, confirm availability, request personal details not listed, or asks a factual question outside the context, reply exactly:
-"${FALLBACK_REPLY}"
+  // ── UI helpers ──
+  function setInputState(disabled) {
+    chatInput.disabled = disabled;
+    chatSend.disabled = disabled;
+  }
 
-Known summary: Vamshi is a Technical Analyst / Senior Software Engineer with ${expYears} years of experience, specializing in Python, FastAPI, Django, Microservices, REST APIs, AWS, Azure, Docker, and Cloud Architecture. He is currently working at Stryv.ai.
-
-Here is the complete text extracted from his portfolio website for you to use as context to answer any questions:
-"""
-${pageContent}
-"""
-`;
-
-  let chatHistory = [];
-
-  function linkifyPhoneNumber(container, text) {
-    const phonePattern = /(\+91\s?8179828084|\+918179828084)/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = phonePattern.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        container.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-      }
-
-      const link = document.createElement('a');
-      link.href = `tel:${CONTACT_PHONE_TEL}`;
-      link.textContent = CONTACT_PHONE_DISPLAY;
-      link.setAttribute('aria-label', `Call Vamshi at ${CONTACT_PHONE_DISPLAY}`);
-      container.appendChild(link);
-      lastIndex = match.index + match[0].length;
-    }
-
-    if (lastIndex < text.length) {
-      container.appendChild(document.createTextNode(text.slice(lastIndex)));
-    }
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
   function addMessage(text, isBot = false) {
     const div = document.createElement('div');
     div.className = `msg ${isBot ? 'bot-msg' : 'user-msg'}`;
     if (isBot) {
-      linkifyPhoneNumber(div, text);
+      // Linkify phone numbers
+      const phoneRe = /(\+91\s?8179828084|\+918179828084)/g;
+      let lastIdx = 0, match;
+      while ((match = phoneRe.exec(text)) !== null) {
+        if (match.index > lastIdx) div.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+        const a = document.createElement('a');
+        a.href = 'tel:+918179828084'; a.textContent = '+91 8179828084';
+        div.appendChild(a);
+        lastIdx = match.index + match[0].length;
+      }
+      if (lastIdx < text.length) div.appendChild(document.createTextNode(text.slice(lastIdx)));
     } else {
       div.textContent = text;
     }
     chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    scrollToBottom();
+    return div;
   }
 
-  function getPortfolioFallbackReply(text) {
-    const normalized = text.toLowerCase().trim().replace(/[.!?]+$/g, '');
-
-    if (/^(hi|hello|hey|hai|hii|hu|hlo|helo|good morning|good afternoon|good evening|namaste)$/.test(normalized)) {
-      return "Hi! I'm Vamshi's AI assistant. I can help you with his experience, skills, projects, certifications, resume, or contact details.";
-    }
-
-    if (/\b(tell me about yourself|about yourself|about vamshi|who are you|who is vamshi|profile|summary|intro|introduction|brief|overview)\b/.test(normalized)) {
-      return `Vamshidhar Reddy Beecharla is a Technical Analyst / Senior Software Engineer with ${expYears} years of experience in Python backend development, FastAPI, Django, microservices, REST APIs, and cloud architecture. He currently works at Stryv.ai and has built production systems including 500+ APIs.`;
-    }
-
-    if (/\b(skill|skills|technology|technologies|tech stack|tools|expertise|programming|languages|framework|frameworks|backend)\b/.test(normalized)) {
-      return "Vamshi's core skills include Python, FastAPI, Django, REST APIs, microservices, PostgreSQL, MySQL, Redis, MongoDB, AWS, Azure, Docker, Kubernetes, CI/CD, Nginx, React.js, JavaScript, Git, Postman, Linux, and Jira.";
-    }
-
-    if (/\b(python|fastapi|django|api|apis|rest|microservice|microservices)\b/.test(normalized)) {
-      return "Vamshi specializes in Python backend engineering with FastAPI, Django, REST APIs, and microservices. His portfolio highlights a FastAPI migration where he built 500+ APIs and improved latency by 35%.";
-    }
-
-    if (/\b(cloud|aws|azure|docker|kubernetes|devops|deployment|deploy|cicd|ci\/cd|nginx)\b/.test(normalized)) {
-      return "Vamshi works with AWS, Azure, Docker, Kubernetes, CI/CD, Nginx, Blob Storage, and cloud-native deployments. His recent work includes Azure deployments and Dockerized backend services.";
-    }
-
-    if (/\b(database|databases|db|sql|mysql|postgres|postgresql|redis|mongodb|elastic|elasticsearch)\b/.test(normalized)) {
-      return "Vamshi has experience with PostgreSQL, MySQL, Redis, MongoDB, and Elasticsearch, along with backend data workflows and ORM-based application development.";
-    }
-
-    if (/\b(experience|work|company|job|current|currently|role|position|stryv|smallday|career)\b/.test(normalized)) {
-      return "Vamshi currently works as a Senior Software Engineer at Stryv.ai, where he migrated a legacy C# monolith to FastAPI microservices, built 500+ APIs, improved API latency by 35%, and worked on Azure deployments. Previously, he worked at SmallDay IT Services on CodeXpro, an online coding assessment platform.";
-    }
-
-    if (/\b(project|projects|portfolio|built|blue book|codexpro|expenses|expense tracker)\b/.test(normalized)) {
-      return "His featured projects include Blue Book Services APIs, an enterprise-grade FastAPI platform with 500+ RESTful endpoints; CodeXpro, an online coding assessment platform; and an Expenses Tracker built with Django and MySQL.";
-    }
-
-    if (/\b(achievement|achievements|impact|latency|performance|award|awards|key contributor|deployment|deployments|bbos)\b/.test(normalized)) {
-      return "Vamshi's achievements include the Key Contributor Award for the BBOS Project, 35% API latency reduction through optimized asynchronous execution, and scalable AWS/Azure deployments that cut deployment time by 70%.";
-    }
-
-    if (/\b(certificate|certification|certifications|award)\b/.test(normalized)) {
-      return "His certifications include Python Full Stack Development, Python Program Expert, Git Version Control, Postman API Fundamentals, GitHub Foundations, and a Key Contributor Award.";
-    }
-
-    if (/\b(education|degree|study|qualification|academic|academics|mca|bsc|b.sc)\b/.test(normalized)) {
-      return "Vamshi completed MCA from Yogi Vemana University in 2021 and B.Sc. in Computers from Yogi Vemana University in 2018.";
-    }
-
-    if (/\b(location|place|city|where|address)\b/.test(normalized)) {
-      return "Vamshi is based in Hyderabad, India. His address is listed as Hyderabad.";
-    }
-
-    if (/\b(personal|dob|date of birth|birth|birthday|language|languages|telugu|kannada|english)\b/.test(normalized)) {
-      return "Vamshi's personal details: Date of Birth is 19th Jun 1998; languages known are English, Telugu, and Kannada; address is Hyderabad.";
-    }
-
-    if (/\b(available|availability|open to work|opportunity|opportunities|hire|hiring|recruiter|hr)\b/.test(normalized)) {
-      return `Vamshi's portfolio says he is open for new opportunities. For interviews or hiring conversations, please call him directly at ${CONTACT_PHONE_DISPLAY}.`;
-    }
-
-    if (/\b(call|phone|mobile|contact|number|interview|schedule|talk|reach|connect)\b/.test(normalized)) {
-      return `You can call Vamshi directly at ${CONTACT_PHONE_DISPLAY}.`;
-    }
-
-    if (/\b(email|mail)\b/.test(normalized)) {
-      return "You can email Vamshi at vamshiyvu@gmail.com.";
-    }
-
-    if (/\b(resume|cv)\b/.test(normalized)) {
-      return "You can download Vamshi's resume using the Download Resume button on this portfolio.";
-    }
-
-    if (/\b(linkedin)\b/.test(normalized)) {
-      return "You can connect with Vamshi on LinkedIn from the LinkedIn button in this portfolio.";
-    }
-
-    if (/\b(github|git hub|code)\b/.test(normalized)) {
-      return "You can view Vamshi's GitHub from the GitHub button in this portfolio.";
-    }
-
-    if (/^(thanks|thank you|thx|ok|okay|great|nice)$/.test(normalized)) {
-      return "You're welcome. You can ask me about Vamshi's experience, skills, projects, certifications, resume, or contact details.";
-    }
-
-    return FALLBACK_REPLY;
+  function addTypingBubble(label = '') {
+    const div = document.createElement('div');
+    div.className = 'typing-bubble';
+    div.innerHTML = `
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+      ${label ? `<span>${label}</span>` : ''}
+    `;
+    chatMessages.appendChild(div);
+    scrollToBottom();
+    return div;
   }
 
-  async function getBackendChatGPTReply(text) {
-    if (!['http:', 'https:'].includes(window.location.protocol)) {
-      return null;
-    }
+  function addWakeMsg() {
+    const div = document.createElement('div');
+    div.className = 'wake-msg';
+    div.textContent = '⏳ Waking up the AI server (free tier cold start — usually ~15s)…';
+    chatMessages.appendChild(div);
+    scrollToBottom();
+    return div;
+  }
+
+  // ── Send message ──
+  async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, false);
+    chatInput.value = '';
+    setInputState(true);
+
+    // Detect cold start: show wake-up message if server hasn't responded before
+    let typingEl, wakeEl;
+    let wakeTimer = setTimeout(() => {
+      if (!serverReady) {
+        wakeEl = addWakeMsg();
+      }
+    }, 2500);
+
+    typingEl = addTypingBubble();
+
+    conversationHistory.push({ role: 'user', content: text });
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), WAKE_TIMEOUT_MS);
 
     try {
-      const response = await fetch('/api/portfolio-chat', {
+      const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text,
-          pageContent,
-          fallbackReply: FALLBACK_REPLY
-        })
+          conversation_history: conversationHistory.slice(-10), // last 10 turns
+        }),
+        signal: controller.signal,
       });
 
-      if (!response.ok) return null;
+      clearTimeout(timeoutId);
+      clearTimeout(wakeTimer);
+      typingEl && typingEl.remove();
+      wakeEl && wakeEl.remove();
+      serverReady = true;
 
-      const data = await response.json();
-      return data && typeof data.reply === 'string' && data.reply.trim()
-        ? data.reply.trim()
-        : null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async function sendMessage() {
-    const text = chatInputField.value.trim();
-    if (!text) return;
-
-    addMessage(text, false);
-    chatInputField.value = '';
-    
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'typing-indicator';
-    typingDiv.textContent = 'Typing...';
-    typingDiv.style.display = 'block';
-    chatMessages.appendChild(typingDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    chatHistory.push({ role: "user", parts: [{ text: text }] });
-
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: systemPrompt }]
-          },
-          contents: chatHistory,
-          generationConfig: {
-            temperature: 0.2,
-            topP: 0.8,
-            maxOutputTokens: 220
-          }
-        })
-      });
-
-      if (!response.ok) {
-        chatHistory.pop();
-        typingDiv.remove();
-        const backendReply = await getBackendChatGPTReply(text);
-        addMessage(backendReply || getPortfolioFallbackReply(text), true);
-        return;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `HTTP ${res.status}`);
       }
-      
-      const data = await response.json();
-      typingDiv.remove();
 
-      if (data.candidates && data.candidates[0].content.parts[0].text) {
-        const botReply = data.candidates[0].content.parts[0].text;
-        chatHistory.push({ role: "model", parts: [{ text: botReply }] });
-        addMessage(botReply, true);
+      const data = await res.json();
+      const reply = data.reply || 'Sorry, I got an empty response.';
+
+      conversationHistory.push({ role: 'assistant', content: reply });
+      addMessage(reply, true);
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      clearTimeout(wakeTimer);
+      typingEl && typingEl.remove();
+      wakeEl && wakeEl.remove();
+      conversationHistory.pop(); // remove failed user message
+
+      if (err.name === 'AbortError') {
+        addMessage('⏱️ The server is taking too long to wake up. Please try again in a moment.', true);
       } else {
-        chatHistory.pop(); // Revert user message on error to keep history alternating
-        const backendReply = await getBackendChatGPTReply(text);
-        addMessage(backendReply || getPortfolioFallbackReply(text), true);
+        addMessage('❌ Sorry, something went wrong. Please try again.', true);
       }
-    } catch (error) {
-      typingDiv.remove();
-      chatHistory.pop(); // Revert user message on error to keep history alternating
-      const backendReply = await getBackendChatGPTReply(text);
-      addMessage(backendReply || getPortfolioFallbackReply(text), true);
+    } finally {
+      setInputState(false);
+      chatInput.focus();
     }
   }
 
   chatSend.addEventListener('click', sendMessage);
-  chatInputField.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-  });
+  chatInput.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(); });
 });
 </script>
-
-<!-- CHATBOT UI -->
-<button class="chat-btn" id="chat-btn" aria-label="Chat with AI">💬 Chat</button>
-<div class="chat-window" id="chat-window">
-  <div class="chat-header">
-    <span>HR Assistant AI</span>
-    <button id="chat-close">✕</button>
-  </div>
-  <div class="chat-messages" id="chat-messages">
-    <div class="msg bot-msg">Hi! I'm Vamshi's AI assistant. Ask me anything about his experience, skills, or projects!</div>
-  </div>
-  <div class="chat-input">
-    <input type="text" id="chat-input-field" placeholder="Ask a question..." autocomplete="off" />
-    <button id="chat-send">Send</button>
-  </div>
-</div>
-
-</body>
-</html>

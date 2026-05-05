@@ -497,45 +497,73 @@
   }
 
   /* ── Mobile: slide-up sheet ── */
-  @media (max-width: 640px) {
-    .chat-btn {
-      bottom: 1.25rem; right: 1.25rem;
-      padding: 0.8rem 1.1rem; font-size: 0.9rem;
-    }
-    .chat-window {
-      /* Slide up from bottom as a sheet */
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      top: auto;
-      width: 100%;
-      height: 88vh;           /* leaves a sliver at top so user knows they can close */
-      max-height: 88vh;
-      border-radius: 20px 20px 0 0;
-      border-bottom: none;
-      z-index: 99999;
-    }
-    .chat-messages {
-      padding: 0.85rem;
-    }
-    .chat-input {
-      padding: 0.7rem 0.75rem;
-      /* Push above iOS home indicator */
-      padding-bottom: max(0.7rem, env(safe-area-inset-bottom));
-    }
-    .chat-input input {
-      font-size: 16px; /* prevent iOS zoom on focus */
-    }
-  }
-
-  /* Backdrop overlay for mobile */
+  /* ── Backdrop overlay (all screens, hidden by default) ── */
   .chat-backdrop {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 99998;
-    backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
   }
   .chat-backdrop.active { display: block; }
+
+  /* ── Mobile bottom sheet ── */
+  @media (max-width: 640px) {
+    .chat-btn {
+      bottom: 1.2rem; right: 1.2rem;
+      padding: 0.8rem 1.2rem; font-size: 0.92rem;
+    }
+
+    /* Hide by default using transform (keeps display:flex so we can animate) */
+    .chat-window {
+      position: fixed;
+      left: 0; right: 0; bottom: 0; top: auto;
+      width: 100%; max-width: 100%;
+      height: 85vh; max-height: 85vh;
+      border-radius: 22px 22px 0 0;
+      border: 1px solid var(--border); border-bottom: none;
+      z-index: 9999;
+      /* Always flex, hidden via transform */
+      display: flex !important;
+      transform: translateY(100%);
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+    }
+    .chat-window.active {
+      transform: translateY(0);
+    }
+
+    /* Drag handle pill */
+    .chat-header {
+      position: relative;
+      padding-top: 1.5rem;
+    }
+    .chat-header::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 36px; height: 4px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 2px;
+    }
+
+    .chat-messages {
+      padding: 1rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .msg { max-width: 90%; font-size: 0.96rem; }
+
+    .chat-input {
+      padding: 0.8rem;
+      padding-bottom: max(0.8rem, env(safe-area-inset-bottom));
+    }
+    .chat-input input {
+      font-size: 16px; /* prevent iOS auto-zoom */
+    }
+    .chat-send-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+  }
 
   /* Motion */
   @keyframes fadeUp {

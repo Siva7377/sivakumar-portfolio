@@ -374,6 +374,27 @@
     .btn { width: 100%; }
   }
 
+  /* Mobile chat — full screen overlay */
+  @media (max-width: 600px) {
+    .chat-window {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      bottom: 0;
+      right: 0;
+      border-radius: 0;
+      z-index: 99999;
+    }
+    .chat-btn {
+      bottom: 1.2rem;
+      right: 1.2rem;
+      padding: 0.85rem 1.2rem;
+      font-size: 1rem;
+    }
+  }
+
   /* Chatbot */
   .chat-btn {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
@@ -426,6 +447,8 @@
     border: 1px solid var(--border); align-self: flex-start;
     border-bottom-left-radius: 3px;
   }
+  .bot-msg code { background: rgba(15,118,110,0.1); color: var(--accent); padding: 0.1rem 0.35rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85em; }
+  .bot-msg strong { color: var(--text-main); font-weight: 700; }
   .bot-msg a { color: var(--accent); font-weight: 700; text-decoration: underline; }
   .user-msg {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -1169,16 +1192,26 @@ document.addEventListener('DOMContentLoaded', function () {
   let wakingUp = false;
 
   // ── Toggle window ──
+  function openChat() {
+    chatWindow.classList.add('active');
+    if (window.innerWidth <= 600) document.body.style.overflow = 'hidden';
+    if (!serverReady && !wakingUp) pingServer();
+    setTimeout(() => chatInput.focus(), 100);
+  }
+  function closeChat() {
+    chatWindow.classList.remove('active');
+    document.body.style.overflow = '';
+  }
   chatBtn.addEventListener('click', () => {
-    chatWindow.classList.toggle('active');
-    if (chatWindow.classList.contains('active') && !serverReady && !wakingUp) {
-      pingServer();
-    }
-    if (chatWindow.classList.contains('active')) {
-      setTimeout(() => chatInput.focus(), 100);
+    chatWindow.classList.contains('active') ? closeChat() : openChat();
+  });
+  chatClose.addEventListener('click', closeChat);
+  document.addEventListener('click', (e) => {
+    if (chatWindow.classList.contains('active') &&
+        !chatWindow.contains(e.target) && !chatBtn.contains(e.target)) {
+      closeChat();
     }
   });
-  chatClose.addEventListener('click', () => chatWindow.classList.remove('active'));
 
   // ── Ping server on load to reduce cold start wait ──
   async function pingServer() {
@@ -1200,21 +1233,31 @@ document.addEventListener('DOMContentLoaded', function () {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
+  function parseMarkdown(text) {
+    // Convert markdown to clean HTML
+    return text
+      .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')  // ***bold italic***
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')                  // **bold**
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')                                // *italic*
+      .replace(/`([^`]+)`/g, '<code>$1</code>')                             // `code`
+      .replace(/^###\s+(.+)$/gm, '<strong>$1</strong>')                    // ### heading
+      .replace(/^##\s+(.+)$/gm, '<strong>$1</strong>')                     // ## heading
+      .replace(/^#\s+(.+)$/gm, '<strong>$1</strong>')                      // # heading
+      .replace(/^[-•]\s+(.+)$/gm, '• $1')                                 // - list items
+      .replace(/^\d+\.\s+(.+)$/gm, '• $1')                              // 1. numbered lists
+      .replace(/\n{2,}/g, '<br><br>')                                       // double newline = paragraph
+      .replace(/\n/g, '<br>');                                              // single newline
+  }
+
   function addMessage(text, isBot = false) {
     const div = document.createElement('div');
     div.className = `msg ${isBot ? 'bot-msg' : 'user-msg'}`;
     if (isBot) {
-      // Linkify phone numbers
-      const phoneRe = /(\+91\s?8179828084|\+918179828084)/g;
-      let lastIdx = 0, match;
-      while ((match = phoneRe.exec(text)) !== null) {
-        if (match.index > lastIdx) div.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
-        const a = document.createElement('a');
-        a.href = 'tel:+918179828084'; a.textContent = '+91 8179828084';
-        div.appendChild(a);
-        lastIdx = match.index + match[0].length;
-      }
-      if (lastIdx < text.length) div.appendChild(document.createTextNode(text.slice(lastIdx)));
+      // Strip markdown and linkify phone numbers
+      let html = parseMarkdown(text);
+      html = html.replace(/(\+91\s?8179828084|\+918179828084)/g,
+        '<a href="tel:+918179828084">+91 8179828084</a>');
+      div.innerHTML = html;
     } else {
       div.textContent = text;
     }

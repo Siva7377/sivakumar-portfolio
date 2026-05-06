@@ -515,20 +515,25 @@
       padding: 0.8rem 1.2rem; font-size: 0.92rem;
     }
 
-    /* Hide by default using transform (keeps display:flex so we can animate) */
+    /* Bottom sheet — 60% height, NOT full screen */
     .chat-window {
       position: fixed;
-      left: 0; right: 0; bottom: 0; top: auto;
+      left: 0; right: 0;
+      bottom: 0;
+      top: auto !important;          /* never stretch to top */
       width: 100%; max-width: 100%;
-      height: 85vh; max-height: 85vh;
-      border-radius: 22px 22px 0 0;
-      border: 1px solid var(--border); border-bottom: none;
+      height: 60vh;                  /* comfortable sheet height */
+      max-height: 60vh;
+      min-height: 340px;
+      border-radius: 20px 20px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
       z-index: 9999;
-      /* Always flex, hidden via transform */
       display: flex !important;
+      flex-direction: column;
       transform: translateY(100%);
-      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
     }
     .chat-window.active {
       transform: translateY(0);
@@ -537,32 +542,40 @@
     /* Drag handle pill */
     .chat-header {
       position: relative;
-      padding-top: 1.5rem;
+      padding-top: 1.4rem;
+      flex-shrink: 0;
     }
     .chat-header::before {
       content: '';
       position: absolute;
-      top: 8px; left: 50%;
+      top: 7px; left: 50%;
       transform: translateX(-50%);
       width: 36px; height: 4px;
-      background: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.4);
       border-radius: 2px;
     }
 
+    /* Messages — scrollable, flex-grow fills space */
     .chat-messages {
-      padding: 1rem;
+      flex: 1 1 0;
+      min-height: 0;               /* critical: allows flex child to scroll */
+      padding: 0.85rem;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
-    .msg { max-width: 90%; font-size: 0.96rem; }
 
+    .msg { max-width: 90%; font-size: 0.94rem; }
+
+    /* Input always visible above keyboard */
     .chat-input {
-      padding: 0.8rem;
-      padding-bottom: max(0.8rem, env(safe-area-inset-bottom));
+      flex-shrink: 0;
+      padding: 0.7rem 0.8rem;
+      padding-bottom: max(0.7rem, env(safe-area-inset-bottom));
     }
     .chat-input input {
-      font-size: 16px; /* prevent iOS auto-zoom */
+      font-size: 16px;             /* prevent iOS auto-zoom */
     }
-    .chat-send-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+    .chat-send-btn { width: 42px; height: 42px; font-size: 1rem; }
   }
 
   /* Motion */
@@ -1266,7 +1279,11 @@ document.addEventListener('DOMContentLoaded', function () {
     backdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
     if (!serverReady && !wakingUp) pingServer();
-    setTimeout(() => chatInput.focus(), 150);
+    // Scroll to show latest message first; only auto-focus on desktop
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      if (window.innerWidth > 640) chatInput.focus();
+    }, 380); // wait for slide-up animation to finish
   }
   function closeChat() {
     chatWindow.classList.remove('active');
@@ -1296,7 +1313,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    requestAnimationFrame(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
   }
 
   function parseMarkdown(text) {

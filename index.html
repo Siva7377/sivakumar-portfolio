@@ -209,6 +209,28 @@
   #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 8rem; padding-bottom: 4rem; }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; }
   .hero-content { max-width: 920px; }
+  /* Employment status badge */
+  .hero-status { margin: 0.5rem 0 0.25rem; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.82rem;
+    font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.01em;
+  }
+  .status-badge.employed {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+  .status-pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ef4444; display: inline-block; flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
   .hero-subtitle {
     display: inline-flex; align-items: center; gap: 0.65rem;
     font-family: var(--font-mono); font-size: 0.86rem; color: var(--accent);
@@ -696,6 +718,12 @@
       <div class="hero-grid">
       <div class="hero-content">
         <div class="hero-subtitle">Technical Analyst / Backend Engineer</div>
+        <div class="hero-status">
+          <span class="status-badge employed">
+            <span class="status-pulse"></span>
+            Currently at Stryv.ai &nbsp;·&nbsp; Not open to new opportunities
+          </span>
+        </div>
         <h1 class="hero-name">Vamshidhar Reddy.</h1>
         <h1 class="hero-title-accent">I build scalable backend systems.</h1>
         <p class="hero-bio">

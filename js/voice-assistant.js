@@ -8,8 +8,6 @@ class VamshiVoiceAssistant {
     this.isListening = false;
     this.isActive = false;
     this.isProcessing = false;
-    this.shouldKeepListening = false;
-    this.isMobileVoice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     this.conversationHistory = [];
     this.recognition = null;
     this.synthesis = window.speechSynthesis;
@@ -31,7 +29,7 @@ class VamshiVoiceAssistant {
     // Initialize speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
-    this.recognition.continuous = !this.isMobileVoice;
+    this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.recognition.lang = 'en-US';
 
@@ -77,13 +75,10 @@ class VamshiVoiceAssistant {
 
     this.recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
-      this.isListening = false;
-      this.shouldKeepListening = false;
-      this.updateUI();
-      this.showBetaMessage('Voice assistant is in beta. I could not hear clearly. Tap the mic and speak after the prompt.');
+      this.showBetaMessage('Voice assistant is in beta. I could not hear clearly, please try the mic again.');
       if (event.error === 'no-speech') {
-        // Desktop can recover from no-speech; mobile works better as one tap per question.
-        if (!this.isMobileVoice && this.shouldKeepListening) {
+        // Restart if no speech detected
+        if (this.isListening) {
           try {
             this.recognition.start();
           } catch (e) {
@@ -95,11 +90,8 @@ class VamshiVoiceAssistant {
 
     this.recognition.onend = () => {
       console.log('Voice recognition ended');
-      this.isListening = false;
-      this.updateUI();
-
-      // Auto-restart only on desktop. Mobile browsers frequently break continuous mode.
-      if (!this.isMobileVoice && this.shouldKeepListening && !this.isProcessing) {
+      // Auto-restart if still listening
+      if (this.isListening) {
         setTimeout(() => {
           try {
             this.recognition.start();
@@ -131,7 +123,6 @@ class VamshiVoiceAssistant {
   async sendToBackend(message) {
     try {
       this.isProcessing = true;
-      this.pauseRecognitionForResponse();
       this.showThinking();
       this.updateTranscript(`You asked: "${message}"`);
       
@@ -160,7 +151,7 @@ class VamshiVoiceAssistant {
       
       // Speak response
       await this.speak(reply);
-      this.showReadyForNextQuestion();
+      this.hideThinking();
       
       return reply;
     } catch (error) {
@@ -180,8 +171,7 @@ class VamshiVoiceAssistant {
     // Check for exit commands
     const exitCommands = ['stop', 'exit', 'close', 'bye', 'goodbye', 'thank you'];
     if (exitCommands.some(cmd => command.includes(cmd))) {
-      this.shouldKeepListening = false;
-      this.speak("Goodbye! Tap the mic anytime to talk again.");
+      this.speak("Goodbye! Say 'Hey Vamshi' anytime to talk again.");
       setTimeout(() => this.deactivate(), 2000);
       return;
     }
@@ -232,10 +222,9 @@ class VamshiVoiceAssistant {
     if (!this.isListening) {
       try {
         this.isActive = true;
-        this.shouldKeepListening = !this.isMobileVoice;
         this.showAssistantUI();
-        this.updateStatus(this.isMobileVoice ? 'Listening...' : 'Voice beta: listening...');
-        this.updateTranscript('Speak now. Ask your question about Vamshi.');
+        this.updateStatus('Voice beta: listening...');
+        this.updateTranscript('Ask your question about Vamshi. I will show and speak the answer.');
         this.updateUI();
         this.recognition.start();
       } catch (e) {
@@ -247,20 +236,8 @@ class VamshiVoiceAssistant {
 
   stopListening() {
     this.isListening = false;
-    this.shouldKeepListening = false;
     this.recognition.stop();
     this.deactivate();
-  }
-
-  pauseRecognitionForResponse() {
-    this.shouldKeepListening = false;
-    if (this.isListening) {
-      try {
-        this.recognition.stop();
-      } catch (e) {
-        console.log('Recognition already stopped');
-      }
-    }
   }
 
   createUI() {
@@ -592,23 +569,6 @@ class VamshiVoiceAssistant {
 
   hideSpeaking() {
     this.updateStatus('Listening...');
-  }
-
-  showReadyForNextQuestion() {
-    if (this.isMobileVoice) {
-      this.isActive = false;
-      this.isListening = false;
-      this.updateStatus('Tap mic to ask again');
-      this.updateUI();
-    } else {
-      this.shouldKeepListening = true;
-      this.updateStatus('Listening...');
-      try {
-        this.recognition.start();
-      } catch (e) {
-        console.log('Recognition restart delayed');
-      }
-    }
   }
 }
 

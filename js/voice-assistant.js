@@ -271,9 +271,9 @@ class VamshiVoiceAssistant {
       <style>
         #voice-assistant-container {
           position: fixed;
-          bottom: 92px;
-          right: 32px;
-          z-index: 9999;
+          bottom: 20px;
+          right: 20px;
+          z-index: 10000;
         }
 
         #voice-toggle-btn {
@@ -469,11 +469,6 @@ class VamshiVoiceAssistant {
         }
 
         @media (max-width: 768px) {
-          #voice-assistant-container {
-            bottom: 86px;
-            right: 20px;
-          }
-
           #voice-toggle-btn {
             width: 54px;
             height: 54px;

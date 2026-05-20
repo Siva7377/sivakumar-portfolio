@@ -276,26 +276,6 @@ class VamshiVoiceAssistant {
           z-index: 9999;
         }
 
-        #voice-assistant-container.guide-active #voice-toggle-btn {
-          animation: micGuidePulse 1.6s ease-in-out 3;
-        }
-
-        #voice-guide-hand {
-          position: absolute;
-          right: 56px;
-          bottom: -18px;
-          font-size: 32px;
-          line-height: 1;
-          pointer-events: none;
-          opacity: 0;
-          filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.24));
-          transform: translate(18px, 22px) rotate(-18deg);
-        }
-
-        #voice-assistant-container.guide-active #voice-guide-hand {
-          animation: handToMic 1.6s ease-in-out 3;
-        }
-
         #voice-toggle-btn {
           width: 60px;
           height: 60px;
@@ -334,19 +314,6 @@ class VamshiVoiceAssistant {
         @keyframes pulse {
           0%, 100% { transform: scale(1); opacity: 0.5; }
           50% { transform: scale(1.3); opacity: 0; }
-        }
-
-        @keyframes micGuidePulse {
-          0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4); }
-          45% { transform: scale(1.08); box-shadow: 0 8px 32px rgba(37, 99, 235, 0.55); }
-        }
-
-        @keyframes handToMic {
-          0% { opacity: 0; transform: translate(18px, 22px) rotate(-18deg); }
-          18% { opacity: 1; }
-          58% { opacity: 1; transform: translate(-14px, -20px) rotate(-8deg); }
-          74% { opacity: 1; transform: translate(-8px, -14px) rotate(-8deg) scale(0.9); }
-          100% { opacity: 0; transform: translate(-8px, -14px) rotate(-8deg) scale(1); }
         }
 
         #voice-toggle-btn svg {
@@ -512,12 +479,6 @@ class VamshiVoiceAssistant {
             height: 54px;
           }
 
-          #voice-guide-hand {
-            right: 50px;
-            bottom: -16px;
-            font-size: 30px;
-          }
-
           #voice-assistant-ui {
             width: 95%;
             padding: 30px 20px;
@@ -540,7 +501,6 @@ class VamshiVoiceAssistant {
           <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
         </svg>
       </button>
-      <div id="voice-guide-hand" aria-hidden="true">👆</div>
 
       <div id="voice-assistant-ui">
         <button id="voice-close-btn">
@@ -567,11 +527,9 @@ class VamshiVoiceAssistant {
     `;
 
     document.body.appendChild(container);
-    this.playMicGuide();
 
     // Attach event listeners
     document.getElementById('voice-toggle-btn').addEventListener('click', () => {
-      this.stopMicGuide();
       if (this.isListening) {
         this.stopListening();
       } else {
@@ -582,28 +540,6 @@ class VamshiVoiceAssistant {
     document.getElementById('voice-close-btn').addEventListener('click', () => {
       this.stopListening();
     });
-  }
-
-  playMicGuide() {
-    const container = document.getElementById('voice-assistant-container');
-    if (!container) return;
-
-    window.setTimeout(() => {
-      if (!this.isListening && !this.isActive) {
-        container.classList.add('guide-active');
-      }
-    }, 900);
-
-    window.setTimeout(() => {
-      container.classList.remove('guide-active');
-    }, 6100);
-  }
-
-  stopMicGuide() {
-    const container = document.getElementById('voice-assistant-container');
-    if (container) {
-      container.classList.remove('guide-active');
-    }
   }
 
   updateUI() {

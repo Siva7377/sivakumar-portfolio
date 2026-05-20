@@ -7,6 +7,7 @@ class VamshiVoiceAssistant {
   constructor() {
     this.isListening = false;
     this.isActive = false;
+    this.isProcessing = false;
     this.conversationHistory = [];
     this.recognition = null;
     this.synthesis = window.speechSynthesis;
@@ -44,14 +45,19 @@ class VamshiVoiceAssistant {
     };
 
     this.recognition.onresult = (event) => {
-      const results = event.results;
-      const transcript = Array.from(results)
-        .map(result => result[0].transcript)
-        .join('')
+      if (this.isProcessing) return;
+
+      const result = event.results[event.results.length - 1];
+      const transcript = Array.from(result)
+        .map(item => item.transcript)
+        .join(' ')
         .toLowerCase()
         .trim();
 
       console.log('Heard:', transcript);
+      if (transcript) {
+        this.updateTranscript(`You said: "${transcript}"`);
+      }
 
       // Check for wake word
       if (!this.isActive) {
@@ -61,7 +67,7 @@ class VamshiVoiceAssistant {
         }
       } else {
         // Active - process command
-        if (results[results.length - 1].isFinal) {
+        if (result.isFinal) {
           this.processCommand(transcript);
         }
       }
@@ -69,10 +75,15 @@ class VamshiVoiceAssistant {
 
     this.recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
+      this.showBetaMessage('Voice assistant is in beta. I could not hear clearly, please try the mic again.');
       if (event.error === 'no-speech') {
         // Restart if no speech detected
         if (this.isListening) {
-          this.recognition.start();
+          try {
+            this.recognition.start();
+          } catch (e) {
+            console.log('Recognition restart delayed');
+          }
         }
       }
     };
@@ -97,9 +108,8 @@ class VamshiVoiceAssistant {
     this.isActive = true;
     this.updateUI();
     this.showAssistantUI();
-    
-    // Send wake word to backend
-    this.sendToBackend('Hey Vamshi');
+    this.updateStatus('Listening...');
+    this.updateTranscript('Ask anything about Vamshi.');
   }
 
   deactivate() {
@@ -112,7 +122,9 @@ class VamshiVoiceAssistant {
 
   async sendToBackend(message) {
     try {
+      this.isProcessing = true;
       this.showThinking();
+      this.updateTranscript(`You asked: "${message}"`);
       
       const response = await fetch(`${this.apiUrl}/voice/chat`, {
         method: 'POST',
@@ -130,24 +142,32 @@ class VamshiVoiceAssistant {
       }
 
       const data = await response.json();
+      const reply = data.reply || "I received an empty response. Please try asking again.";
       
       // Add to history
       this.conversationHistory.push({ role: 'user', content: message });
-      this.conversationHistory.push({ role: 'assistant', content: data.reply });
+      this.conversationHistory.push({ role: 'assistant', content: reply });
+      this.updateTranscript(reply);
       
       // Speak response
-      this.speak(data.reply);
+      await this.speak(reply);
       this.hideThinking();
       
-      return data.reply;
+      return reply;
     } catch (error) {
       console.error('Backend error:', error);
       this.hideThinking();
-      this.speak("Sorry, I'm having trouble connecting right now. Please try again.");
+      const betaMessage = "Voice assistant is in beta. The chat API is working, but voice response had a temporary issue. Please try again or use Ask AI.";
+      this.showBetaMessage(betaMessage);
+      await this.speak(betaMessage);
+    } finally {
+      this.isProcessing = false;
     }
   }
 
   async processCommand(command) {
+    if (!command || this.isProcessing) return;
+
     // Check for exit commands
     const exitCommands = ['stop', 'exit', 'close', 'bye', 'goodbye', 'thank you'];
     if (exitCommands.some(cmd => command.includes(cmd))) {
@@ -164,26 +184,33 @@ class VamshiVoiceAssistant {
     // Cancel any ongoing speech
     this.synthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-    
-    // Try to use a good English voice
-    const voices = this.synthesis.getVoices();
-    const preferredVoice = voices.find(voice => 
-      voice.lang.startsWith('en') && (voice.name.includes('Google') || voice.name.includes('Natural'))
-    );
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
+    return new Promise(resolve => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
+      // Try to use a good English voice
+      const voices = this.synthesis.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.lang.startsWith('en') && (voice.name.includes('Google') || voice.name.includes('Natural'))
+      );
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
 
-    this.synthesis.speak(utterance);
-    this.showSpeaking();
-    
-    utterance.onend = () => {
-      this.hideSpeaking();
-    };
+      this.synthesis.speak(utterance);
+      this.showSpeaking();
+      
+      utterance.onend = () => {
+        this.hideSpeaking();
+        resolve();
+      };
+      utterance.onerror = () => {
+        this.hideSpeaking();
+        resolve();
+      };
+    });
   }
 
   stopSpeaking() {
@@ -194,9 +221,15 @@ class VamshiVoiceAssistant {
   startListening() {
     if (!this.isListening) {
       try {
+        this.isActive = true;
+        this.showAssistantUI();
+        this.updateStatus('Voice beta: listening...');
+        this.updateTranscript('Ask your question about Vamshi. I will show and speak the answer.');
+        this.updateUI();
         this.recognition.start();
       } catch (e) {
         console.log('Recognition already started');
+        this.showBetaMessage('Voice assistant is in beta. If the mic does not start, allow microphone access and try again.');
       }
     }
   }
@@ -215,9 +248,9 @@ class VamshiVoiceAssistant {
       <style>
         #voice-assistant-container {
           position: fixed;
-          bottom: 20px;
-          right: 20px;
-          z-index: 10000;
+          bottom: 92px;
+          right: 32px;
+          z-index: 9999;
         }
 
         #voice-toggle-btn {
@@ -378,8 +411,10 @@ class VamshiVoiceAssistant {
           text-align: center;
           color: rgba(255, 255, 255, 0.7);
           font-size: 14px;
-          min-height: 40px;
+          min-height: 56px;
           line-height: 1.6;
+          max-height: 180px;
+          overflow-y: auto;
         }
 
         #voice-close-btn {
@@ -411,6 +446,16 @@ class VamshiVoiceAssistant {
         }
 
         @media (max-width: 768px) {
+          #voice-assistant-container {
+            bottom: 86px;
+            right: 20px;
+          }
+
+          #voice-toggle-btn {
+            width: 54px;
+            height: 54px;
+          }
+
           #voice-assistant-ui {
             width: 95%;
             padding: 30px 20px;
@@ -506,6 +551,12 @@ class VamshiVoiceAssistant {
 
   updateTranscript(text) {
     document.getElementById('voice-transcript').textContent = text;
+  }
+
+  showBetaMessage(text) {
+    this.showAssistantUI();
+    this.updateStatus('Voice beta');
+    this.updateTranscript(text);
   }
 
   showThinking() {

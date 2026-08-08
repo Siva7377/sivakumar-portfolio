@@ -1190,13 +1190,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
   <script>
     angular.module('portfolioApp', [])
-      .controller('SkillsController', function ($scope) {
+.controller('SkillsController', function ($scope, $timeout) {
         $scope.skillCategories = [
           { name: 'Backend & APIs', skills: ['Python', 'FastAPI', 'Django', 'REST APIs', 'Microservices', 'Flask'] },
           { name: 'Databases & Cache', skills: ['PostgreSQL', 'MySQL', 'Redis', 'MongoDB', 'Elasticsearch'] },
           { name: 'Cloud & DevOps', skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'CI/CD', 'Nginx'] },
           { name: 'Frontend & Tools', skills: ['React.js', 'JavaScript', 'Git', 'Postman', 'Linux', 'Jira'] }
         ];
+        $timeout(function () {
+          document.querySelectorAll('.skill-category').forEach(function (item) {
+            item.classList.add('visible');
+          });
+        });
       });
   </script>
 

@@ -217,20 +217,21 @@
     font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.01em;
   }
   .status-badge.employed {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #ef4444;
+        background: linear-gradient(135deg, rgba(45, 212, 191, 0.16), rgba(37, 99, 235, 0.12));
+        border: 1px solid rgba(45, 212, 191, 0.4);
+        color: var(--accent);
+        box-shadow: 0 0 18px rgba(45, 212, 191, 0.18);
   }
-  .status-pulse {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #ef4444; display: inline-block; flex-shrink: 0;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.85); }
-  }
-
+    .status-pulse {
+          width: 8px; height: 8px; border-radius: 50%;
+          background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: inline-block; flex-shrink: 0;
+          box-shadow: 0 0 8px var(--accent);
+          animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(0.85); }
+    }
   .hero-subtitle {
     display: inline-flex; align-items: center; gap: 0.65rem;
     font-family: var(--font-mono); font-size: 0.86rem; color: var(--accent);
@@ -725,7 +726,6 @@
           </span>
         </div>
         <h1 class="hero-name">Siva Kumar.</h1>
-        <h1 class="hero-title-accent">I build scalable backend systems.</h1>
         <p class="hero-bio">
           I'm a Python backend developer specializing in Django, FastAPI, and Flask. With <span id="bio-years">—</span> years of
           experience, I build secure, scalable REST APIs and microservices, and deploy them reliably with Docker and AWS.

@@ -808,33 +808,14 @@
     <div class="container">
       <div class="section-tag">02. Expertise</div>
       <h2>Technical Competencies</h2>
-      <div class="skills-grid">
-        <div class="card skill-category">
-          <h3>Backend & APIs</h3>
-          <div class="skill-chips">
-            <span>Python</span><span>FastAPI</span><span>Django</span><span>REST APIs</span><span>Microservices</span><span>Flask</span>
+      <div class="skills-grid" ng-app="portfolioApp" ng-controller="SkillsController">
+          <div class="card skill-category" ng-repeat="cat in skillCategories">
+            <h3>{{cat.name}}</h3>
+            <div class="skill-chips">
+              <span ng-repeat="skill in cat.skills">{{skill}}</span>
+            </div>
           </div>
         </div>
-        <div class="card skill-category">
-          <h3>Databases & Cache</h3>
-          <div class="skill-chips">
-            <span>PostgreSQL</span><span>MySQL</span><span>Redis</span><span>MongoDB</span><span>Elasticsearch</span>
-          </div>
-        </div>
-        <div class="card skill-category">
-          <h3>Cloud & DevOps</h3>
-          <div class="skill-chips">
-            <span>AWS</span><span>Azure</span><span>Docker</span><span>Kubernetes</span><span>CI/CD</span><span>Nginx</span>
-          </div>
-        </div>
-        <div class="card skill-category">
-          <h3>Frontend & Tools</h3>
-          <div class="skill-chips">
-            <span>React.js</span><span>JavaScript</span><span>Git</span><span>Postman</span><span>Linux</span><span>Jira</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- EXPERIENCE -->
@@ -1206,6 +1187,18 @@
 })();
 
 </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script>
+    angular.module('portfolioApp', [])
+      .controller('SkillsController', function ($scope) {
+        $scope.skillCategories = [
+          { name: 'Backend & APIs', skills: ['Python', 'FastAPI', 'Django', 'REST APIs', 'Microservices', 'Flask'] },
+          { name: 'Databases & Cache', skills: ['PostgreSQL', 'MySQL', 'Redis', 'MongoDB', 'Elasticsearch'] },
+          { name: 'Cloud & DevOps', skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'CI/CD', 'Nginx'] },
+          { name: 'Frontend & Tools', skills: ['React.js', 'JavaScript', 'Git', 'Postman', 'Linux', 'Jira'] }
+        ];
+      });
+  </script>
 
 </body>
 </html>

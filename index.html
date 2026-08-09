@@ -683,7 +683,7 @@
   }
 </style>
 </head>
-<body>
+<body ng-app="portfolioApp">
 
   <!-- NAV -->
   <nav>
@@ -808,7 +808,7 @@
     <div class="container">
       <div class="section-tag">02. Expertise</div>
       <h2>Technical Competencies</h2>
-      <div class="skills-grid" ng-app="portfolioApp" ng-controller="SkillsController">
+      <div class="skills-grid" ng-controller="SkillsController">
           <div class="card skill-category" ng-repeat="cat in skillCategories">
             <h3>{{cat.name}}</h3>
             <div class="skill-chips">
@@ -876,47 +876,17 @@
     <div class="container">
       <div class="section-tag">04. Projects</div>
       <h2>Featured Work</h2>
-      <div class="projects-grid">
+      <div class="projects-grid" ng-controller="ProjectsController">
 
-        <div class="card proj-card">
-          <div class="proj-number">PROJECT_01</div>
-          <h3 style="color: var(--text-main);">Wealth Management Platform</h3>
-          <p>PostgreSQL-backed Flask and FastAPI APIs for a Morgan Stanley wealth management system, with OAuth2 security and modular microservices.</p>
+        <div class="card proj-card" ng-repeat="proj in projects">
+          <div class="proj-number">{{proj.number}}</div>
+          <h3 style="color: var(--text-main);">{{proj.title}}</h3>
+          <p>{{proj.description}}</p>
           <ul class="proj-highlights">
-            <li>40% faster data retrieval via indexing</li>
-            <li>OAuth2 secured REST APIs</li>
-            <li>60% less manual intervention via automation</li>
+            <li ng-repeat="point in proj.highlights">{{point}}</li>
           </ul>
           <div class="exp-stack">
-            <span class="tag">Flask</span><span class="tag">FastAPI</span><span class="tag">PostgreSQL</span>
-          </div>
-        </div>
-
-        <div class="card proj-card">
-          <div class="proj-number">PROJECT_02</div>
-          <h3 style="color: var(--text-main);">Core Banking Solutions — Channels</h3>
-          <p>Electronic payment channels (IMPS, UPI, Net Banking, Mobile Banking) integrated with the Finacle core banking system for real-time transactions.</p>
-          <ul class="proj-highlights">
-            <li>Flask REST APIs for Finacle integration</li>
-            <li>Dockerized microservices on Kubernetes</li>
-            <li>99.9% service uptime</li>
-          </ul>
-          <div class="exp-stack">
-            <span class="tag">Flask</span><span class="tag">PostgreSQL</span><span class="tag">Docker</span>
-          </div>
-        </div>
-
-        <div class="card proj-card">
-          <div class="proj-number">PROJECT_03</div>
-          <h3 style="color: var(--text-main);">Auto Capture — Hospital Information System</h3>
-          <p>Full-stack hospital management system covering patient registration, billing, pharmacy, lab, and radiology with role-based access control.</p>
-          <ul class="proj-highlights">
-            <li>Django &amp; Flask RESTful APIs</li>
-            <li>HL7/FHIR interoperability integration</li>
-            <li>40% faster queries via optimization</li>
-          </ul>
-          <div class="exp-stack">
-            <span class="tag">Django</span><span class="tag">Flask</span><span class="tag">PostgreSQL</span>
+            <span class="tag" ng-repeat="tech in proj.stack">{{tech}}</span>
           </div>
         </div>
 
@@ -1199,6 +1169,36 @@
         ];
         $timeout(function () {
           document.querySelectorAll('.skill-category').forEach(function (item) {
+            item.classList.add('visible');
+          });
+        });
+            })
+      .controller('ProjectsController', function ($scope, $timeout) {
+        $scope.projects = [
+          {
+            number: 'PROJECT_01',
+            title: 'Wealth Management Platform',
+            description: 'PostgreSQL-backed Flask and FastAPI APIs for a Morgan Stanley wealth management system, with OAuth2 security and modular microservices.',
+            highlights: ['40% faster data retrieval via indexing', 'OAuth2 secured REST APIs', '60% less manual intervention via automation'],
+            stack: ['Flask', 'FastAPI', 'PostgreSQL']
+          },
+          {
+            number: 'PROJECT_02',
+            title: 'Core Banking Solutions — Channels',
+            description: 'Electronic payment channels (IMPS, UPI, Net Banking, Mobile Banking) integrated with the Finacle core banking system for real-time transactions.',
+            highlights: ['Flask REST APIs for Finacle integration', 'Dockerized microservices on Kubernetes', '99.9% service uptime'],
+            stack: ['Flask', 'PostgreSQL', 'Docker']
+          },
+          {
+            number: 'PROJECT_03',
+            title: 'Auto Capture — Hospital Information System',
+            description: 'Full-stack hospital management system covering patient registration, billing, pharmacy, lab, and radiology with role-based access control.',
+            highlights: ['Django & Flask RESTful APIs', 'HL7/FHIR interoperability integration', '40% faster queries via optimization'],
+            stack: ['Django', 'Flask', 'PostgreSQL']
+          }
+        ];
+        $timeout(function () {
+          document.querySelectorAll('.proj-card').forEach(function (item) {
             item.classList.add('visible');
           });
         });

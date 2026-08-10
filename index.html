@@ -823,51 +823,28 @@
     <div class="container">
       <div class="section-tag">03. Experience</div>
       <h2>Work Timeline</h2>
-      <div class="timeline">
+        <div class="timeline" ng-controller="TimelineController">
 
-        <div class="timeline-item">
-          <div class="card">
-            <div class="exp-header">
-              <div>
-                <div class="exp-title">Software Engineer</div>
-                <div class="exp-company">Sixsense.ai</div>
+          <div class="timeline-item" ng-repeat="job in jobs" ng-style="{transitionDelay: ($index*120)+'ms'}">
+            <div class="card">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-title">{{job.title}}</div>
+                  <div class="exp-company">{{job.company}}</div>
+                </div>
+                <div class="exp-date">{{job.dateRange}}</div>
               </div>
-              <div class="exp-date">Jul 2025 — <span id="exp-present-date">Present</span></div>
-            </div>
-            <ul class="exp-bullets">
-              <li>Contributing to the design, development, and maintenance of backend services and APIs as part of the engineering team.</li>
-              <li>Collaborating with cross-functional teams to build and ship reliable, scalable software solutions.</li>
-            </ul>
-            <div class="exp-stack">
-              <span class="tag">Python</span><span class="tag">Django</span><span class="tag">FastAPI</span><span class="tag">AWS</span>
+              <p ng-if="job.subtitle" style="font-weight: 600; margin-bottom: 1rem; color: var(--text-main);">{{job.subtitle}}</p>
+              <ul class="exp-bullets">
+                <li ng-repeat="point in job.bullets">{{point}}</li>
+              </ul>
+              <div class="exp-stack">
+                <span class="tag" ng-repeat="tech in job.stack">{{tech}}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="timeline-item">
-          <div class="card">
-            <div class="exp-header">
-              <div>
-                <div class="exp-title">Software Engineer</div>
-                <div class="exp-company">Mindtree (Payroll: Capital Technologies Pvt Ltd)</div>
-              </div>
-              <div class="exp-date">Aug 2023 — Jul 2025</div>
-            </div>
-            <p style="font-weight: 600; margin-bottom: 1rem; color: var(--text-main);">Wealth Management Platform — Client: Morgan Stanley</p>
-            <ul class="exp-bullets">
-              <li>Engineered robust PostgreSQL database schemas, optimized queries, and implemented indexing strategies that improved data retrieval performance by 40%.</li>
-              <li>Developed secure, high-performance Flask and FastAPI RESTful APIs with OAuth2-based authentication to maintain compliance with financial data security protocols.</li>
-              <li>Automated system maintenance, log management, and report generation using Python and Shell scripting, reducing manual intervention by 60%.</li>
-              <li>Set up and maintained CI/CD pipelines for automated deployment and environment consistency across development, staging, and production.</li>
-              <li>Collaborated cross-functionally with DevOps, DBA, and Business Analysts, following Agile methodologies for sprint planning and code reviews.</li>
-            </ul>
-            <div class="exp-stack">
-              <span class="tag">Django</span><span class="tag">FastAPI</span><span class="tag">Flask</span><span class="tag">PostgreSQL</span><span class="tag">AWS</span><span class="tag">Docker</span>
-            </div>
-          </div>
         </div>
-
-      </div>
     </div>
   </section>
 
@@ -899,13 +876,13 @@
     <div class="container">
       <div class="section-tag">05. Academic Details</div>
       <h2>Education</h2>
-      <div class="academic-grid">
-        <div class="card academic-card">
-          <div class="academic-year">2018 — 2021</div>
-          <div class="academic-degree">Bachelor of Science</div>
-          <p class="academic-university">Sri Venkateswara University, Tirupati · GPA: 8.4/10</p>
+        <div class="academic-grid" ng-controller="AcademicsController">
+          <div class="card academic-card" ng-repeat="edu in academics">
+            <div class="academic-year">{{edu.year}}</div>
+            <div class="academic-degree">{{edu.degree}}</div>
+            <p class="academic-university">{{edu.university}}</p>
+          </div>
         </div>
-      </div>
     </div>
   </section>
 
@@ -914,37 +891,16 @@
     <div class="container">
       <div class="section-tag">06. Certifications</div>
       <h2>My Certificates</h2>
-      <div class="cert-grid">
+        <div class="cert-grid" ng-controller="CertificatesController">
 
-        <div class="cert-card">
-          <div class="cert-info">
-            <div class="cert-name">Python Developer</div>
-            <div class="cert-issuer">Great Learning</div>
+          <div class="cert-card" ng-repeat="cert in certificates" ng-style="{transitionDelay: ($index*80)+'ms'}">
+            <div class="cert-info">
+              <div class="cert-name">{{cert.name}}</div>
+              <div class="cert-issuer">{{cert.issuer}}</div>
+            </div>
           </div>
-        </div>
 
-        <div class="cert-card">
-          <div class="cert-info">
-            <div class="cert-name">Machine Learning</div>
-            <div class="cert-issuer">Great Learning</div>
-          </div>
         </div>
-
-        <div class="cert-card">
-          <div class="cert-info">
-            <div class="cert-name">Data Structures</div>
-            <div class="cert-issuer">Great Learning</div>
-          </div>
-        </div>
-
-        <div class="cert-card">
-          <div class="cert-info">
-            <div class="cert-name">Docker &amp; Kubernetes</div>
-            <div class="cert-issuer">Scaler</div>
-          </div>
-        </div>
-
-      </div>
     </div>
   </section>
 
@@ -1199,6 +1155,67 @@
         ];
         $timeout(function () {
           document.querySelectorAll('.proj-card').forEach(function (item) {
+            item.classList.add('visible');
+          });
+        });
+            })
+      .controller('TimelineController', function ($scope, $timeout) {
+        $scope.jobs = [
+          {
+            title: 'Software Engineer',
+            company: 'Sixsense.ai',
+            dateRange: 'Jul 2025 — Present',
+            subtitle: null,
+            bullets: [
+              'Contributing to the design, development, and maintenance of backend services and APIs as part of the engineering team.',
+              'Collaborating with cross-functional teams to build and ship reliable, scalable software solutions.'
+            ],
+            stack: ['Python', 'Django', 'FastAPI', 'AWS']
+          },
+          {
+            title: 'Software Engineer',
+            company: 'Mindtree (Payroll: Capital Technologies Pvt Ltd)',
+            dateRange: 'Aug 2023 — Jul 2025',
+            subtitle: 'Wealth Management Platform — Client: Morgan Stanley',
+            bullets: [
+              'Engineered robust PostgreSQL database schemas, optimized queries, and implemented indexing strategies that improved data retrieval performance by 40%.',
+              'Developed secure, high-performance Flask and FastAPI RESTful APIs with OAuth2-based authentication to maintain compliance with financial data security protocols.',
+              'Automated system maintenance, log management, and report generation using Python and Shell scripting, reducing manual intervention by 60%.',
+              'Set up and maintained CI/CD pipelines for automated deployment and environment consistency across development, staging, and production.',
+              'Collaborated cross-functionally with DevOps, DBA, and Business Analysts, following Agile methodologies for sprint planning and code reviews.'
+            ],
+            stack: ['Django', 'FastAPI', 'Flask', 'PostgreSQL', 'AWS', 'Docker']
+          }
+        ];
+        $timeout(function () {
+          document.querySelectorAll('.timeline-item').forEach(function (item) {
+            item.classList.add('visible');
+          });
+        });
+      })
+      .controller('AcademicsController', function ($scope, $timeout) {
+        $scope.academics = [
+          {
+            year: '2018 — 2021',
+            degree: 'Bachelor of Science',
+            university: 'Sri Venkateswara University, Tirupati · GPA: 8.4/10'
+          }
+        ];
+        $timeout(function () {
+          document.querySelectorAll('.academic-card').forEach(function (item) {
+            item.classList.add('visible');
+          });
+        });
+      })
+      .controller('CertificatesController', function ($scope, $timeout) {
+        $scope.certificates = [
+          { name: 'Python Developer', issuer: 'Great Learning' },
+          { name: 'Machine Learning', issuer: 'Great Learning' },
+          { name: 'Data Structures', issuer: 'Great Learning' },
+          { name: 'Docker & Kubernetes', issuer: 'Scaler' }
+        ];
+        $timeout(function () {
+          document.querySelectorAll('.cert-card').forEach(function (item) {
             item.classList.add('visible');
           });
         });

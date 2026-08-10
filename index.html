@@ -863,12 +863,12 @@
       <h2>Featured Work</h2>
       <div ng-controller="ProjectsController">
         <div class="proj-filter-bar">
-          <button type="button" class="filter-btn" ng-class="{active: !selectedTech}" ng-click="selectedTech = null">All</button>
-          <button type="button" class="filter-btn" ng-repeat="tech in techList" ng-class="{active: selectedTech === tech}" ng-click="selectedTech = tech">{{tech}}</button>
+          <button type="button" class="filter-btn" ng-class="{active: !filter.tech}" ng-click="filter.tech = null">All</button>
+          <button type="button" class="filter-btn" ng-repeat="tech in techList" ng-class="{active: filter.tech === tech}" ng-click="filter.tech = tech">{{tech}}</button>
         </div>
         <div class="projects-grid">
 
-                <div class="card proj-card" ng-repeat="proj in projects" ng-show="!selectedTech || proj.stack.indexOf(selectedTech) !== -1" ng-style="{transitionDelay: ($index*100)+'ms'}">
+                <div class="card proj-card" ng-repeat="proj in projects" ng-show="!filter.tech || proj.stack.indexOf(filter.tech) !== -1" ng-style="{transitionDelay: ($index*100)+'ms'}">
           <div class="proj-number">{{proj.number}}</div>
           <h3 style="color: var(--text-main);">{{proj.title}}</h3>
           <p>{{proj.description}}</p>
@@ -1174,7 +1174,7 @@
           });
         });
         $scope.techList = allTech;
-        $scope.selectedTech = null;
+                $scope.filter = { tech: null };
         $timeout(function () {
           document.querySelectorAll('.proj-card').forEach(function (item) {
             item.classList.add('visible');

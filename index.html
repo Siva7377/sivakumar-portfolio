@@ -207,7 +207,18 @@
 
   /* Hero */
   #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 8rem; padding-bottom: 4rem; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 2.5rem; }
+  .hero-visual { display: flex; justify-content: center; align-items: center; }
+  .hero-photo {
+    width: 240px; height: 240px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.25);
+    transition: var(--transition);
+  }
+  .hero-photo:hover { transform: scale(1.04); }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: 1.5fr 1fr; }
+    .hero-visual { justify-content: flex-end; }
+  }
   .hero-content { max-width: 920px; }
   /* Employment status badge */
   .hero-status { margin: 0.5rem 0 0.25rem; }
@@ -769,6 +780,9 @@
             <p>Faster Deploy</p>
           </div>
         </div>
+      <div class="hero-visual">
+        <img src="profile.jpg" alt="Siva Kumar" class="hero-photo">
+      </div>
       </div>
       </div>
     </div>
@@ -1000,6 +1014,13 @@
             <div>
               <div class="contact-label">LinkedIn</div>
               <div class="contact-val">Connect</div>
+            </div>
+          </a>
+                    <a href="https://siva.life/" target="_blank" rel="noopener noreferrer" class="contact-item">
+            <div class="contact-icon">🌐</div>
+            <div>
+              <div class="contact-label">Website</div>
+              <div class="contact-val">siva.life</div>
             </div>
           </a>
           <a href="https://github.com/Siva7377" target="_blank" rel="noopener noreferrer" class="contact-item">

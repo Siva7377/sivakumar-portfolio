@@ -336,7 +336,15 @@
   .tag { font-family: var(--font-mono); font-size: 0.75rem; background: rgba(15, 118, 110, 0.1); color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 4px; font-weight: 500; }
 
   /* Projects */
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    .proj-filter-bar { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 2.5rem; }
+  .filter-btn {
+    font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+    padding: 0.5rem 1rem; border-radius: 999px; cursor: pointer; transition: var(--transition);
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 8px 20px rgba(15, 118, 110, 0.3); }
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
   .proj-card { display: flex; flex-direction: column; height: 100%; position: relative; }
   .proj-number { font-family: var(--font-mono); color: var(--accent); font-size: 0.8rem; margin-bottom: 1rem; font-weight: 600; }
   .proj-card p { flex-grow: 1; margin-bottom: 1.5rem; }
@@ -853,9 +861,14 @@
     <div class="container">
       <div class="section-tag">04. Projects</div>
       <h2>Featured Work</h2>
-      <div class="projects-grid" ng-controller="ProjectsController">
+      <div ng-controller="ProjectsController">
+        <div class="proj-filter-bar">
+          <button type="button" class="filter-btn" ng-class="{active: !selectedTech}" ng-click="selectedTech = null">All</button>
+          <button type="button" class="filter-btn" ng-repeat="tech in techList" ng-class="{active: selectedTech === tech}" ng-click="selectedTech = tech">{{tech}}</button>
+        </div>
+        <div class="projects-grid">
 
-        <div class="card proj-card" ng-repeat="proj in projects">
+                <div class="card proj-card" ng-repeat="proj in projects" ng-show="!selectedTech || proj.stack.indexOf(selectedTech) !== -1" ng-style="{transitionDelay: ($index*100)+'ms'}">
           <div class="proj-number">{{proj.number}}</div>
           <h3 style="color: var(--text-main);">{{proj.title}}</h3>
           <p>{{proj.description}}</p>
@@ -867,6 +880,7 @@
           </div>
         </div>
 
+      </div>
       </div>
     </div>
   </section>
@@ -1153,6 +1167,14 @@
             stack: ['Django', 'Flask', 'PostgreSQL']
           }
         ];
+        var allTech = [];
+        $scope.projects.forEach(function (p) {
+          p.stack.forEach(function (t) {
+            if (allTech.indexOf(t) === -1) { allTech.push(t); }
+          });
+        });
+        $scope.techList = allTech;
+        $scope.selectedTech = null;
         $timeout(function () {
           document.querySelectorAll('.proj-card').forEach(function (item) {
             item.classList.add('visible');
